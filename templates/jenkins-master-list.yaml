@@ -74,6 +74,34 @@ items:
 #      weight: 100
 #  status:
 
+- kind: BuildConfig
+  apiVersion: build.openshift.io/v1
+  metadata:
+    name: modern-webapp
+    labels:
+      app: modern-webapp
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: 'modern-webapp:latest'
+    successfulBuildsHistoryLimit: 5
+    failedBuildsHistoryLimit: 5
+    strategy:
+      type: Source
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          namespace: openshift
+          name: 'modern-webapp:10.x'
+    source:
+      type: Git
+      git:
+        uri: {{ .Values.config.s2iUri }}
+        ref: master
+    triggers:
+    - type: ConfigChange
+
 - apiVersion: v1
   kind: ConfigMap
   metadata:
@@ -123,6 +151,12 @@ items:
           creationOfLegacyTokenEnabled: false
           tokenGenerationOnCreationEnabled: false
           usageStatisticsEnabled: true
+      openShift:
+          clusterConfigs:
+          - credentialsId: "test-ose-jenkins"
+            name: "cluster_a"
+            serverUrl: "https://api.shared-rhpds.rhpds.openshift.opentlc.com:6443"
+            skipTlsVerify: true
 
 - kind: PersistentVolumeClaim
   apiVersion: v1
@@ -190,7 +224,7 @@ items:
           - name: JNLP_SERVICE_NAME
             value: '{{ template "jenkins.fullname" . }}-jnlp'
           - name: INSTALL_PLUGINS
-            value: "configuration-as-code:1.33"
+            value: "configuration-as-code:1.33,openshift-client:1.0.32"
           - name: CASC_JENKINS_CONFIG
             value: /var/lib/jenkins/casc_configs
           readinessProbe:

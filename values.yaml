@@ -1,0 +1,31 @@
+config:
+  # URI to Jenkins s2i configuration
+  # https://github.com/openshift/jenkins#installing-using-s2i-build
+  s2iUri: ""
+
+master:
+  # Container image and tag
+  # https://github.com/openshift/jenkins#installation-openshift-v4
+  image: "registry.redhat.io/openshift4/ose-jenkins"
+  imageTag: "4.2"
+
+  # Used for label app.kubernetes.io/component
+  # https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/
+  componentName: "jenkins-master"
+
+  # Resource requests
+  # https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "256Mi"
+    limits:
+      cpu: "2000m"
+      memory: "4096Mi"
+
+  # Health check information
+  # https://docs.openshift.com/container-platform/latest/nodes/containers/nodes-containers-health.html
+  healthProbesReadinessTimeout: 5
+  healthProbeReadinessPeriodSeconds: 10
+  healthProbeReadinessFailureThreshold: 3
+  healthProbeReadinessInitialDelay: 60
