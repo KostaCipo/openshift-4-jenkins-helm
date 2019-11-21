@@ -74,33 +74,28 @@ items:
 #      weight: 100
 #  status:
 
-- kind: BuildConfig
-  apiVersion: build.openshift.io/v1
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
   metadata:
-    name: modern-webapp
+    name: jenkins
     labels:
-      app: modern-webapp
+      name: jenkins
   spec:
+    triggers:
+    - type: ConfigChange
+    source:
+      type: Dockerfile
+      dockerfile: |
+        FROM jenkins/jenkins:lts
+        USER root
+        RUN chown -R 1001:0 /usr/share/jenkins \
+          && chown -R 1001:0 /var/jenkins_home
+    strategy:
+      type: Docker
     output:
       to:
         kind: ImageStreamTag
-        name: 'modern-webapp:latest'
-    successfulBuildsHistoryLimit: 5
-    failedBuildsHistoryLimit: 5
-    strategy:
-      type: Source
-      sourceStrategy:
-        from:
-          kind: ImageStreamTag
-          namespace: openshift
-          name: 'modern-webapp:10.x'
-    source:
-      type: Git
-      git:
-        uri: {{ .Values.config.s2iUri }}
-        ref: master
-    triggers:
-    - type: ConfigChange
+        name: 'jenkins:latest'
 
 - apiVersion: v1
   kind: ConfigMap
@@ -247,3 +242,34 @@ items:
         - name: casc-jenkins-config
           configMap:
             name: {{ template "jenkins.fullname" . }}-casc-config
+
+
+
+```
+apiVersion: v1
+kind: List
+items:
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    name: utilities
+  spec:
+    triggers:
+    - type: ConfigChange
+    source:
+      type: Dockerfile
+      dockerfile: |
+        FROM registry.access.redhat.com/ubi8/ubi:latest
+        RUN yum install -y nc wget curl
+        CMD ["sleep", "10000"]
+    strategy:
+      type: Docker
+    output:
+      to:
+        kind: ImageStreamTag
+        name: 'utilities:latest'
+- kind: ImageStream
+  apiVersion: image.openshift.io/v1
+  metadata:
+    name: utility
+  spec:

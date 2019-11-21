@@ -1,6 +1,12 @@
 apiVersion: v2
-name: ose-jenkins
-description: Jenkins
+name: openshift-4-jenkins
+description: Jenkins instance suitable for use on OpenShift 4.x
 type: application
 version: 0.1.0
 appVersion: 2
+dependencies:
+- name: jenkins
+  version: 1.9.4
+  condition: jenkins.deploy
+  repository: https://kubernetes-charts.storage.googleapis.com/
+
