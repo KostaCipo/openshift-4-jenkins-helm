@@ -8,11 +8,12 @@ jenkins:
     tag: latest
     runAsUser: 1000530000
     fsGroup: 1000530000
-    adminUser: admin
-    adminPassword: 'pCQvT3@O#JM4M2Jx0Dl'
+    adminUser: Wfbk0gczanA8AWdAl4j
+    adminPassword: pCQvT3@O#JM4M2Jx0Dl
     route:
       enabled: true
     installPlugins:
+    - configuration-as-code:latest
     - openshift-client:latest
     - kubernetes:latest
     - workflow-job:latest
@@ -22,6 +23,16 @@ jenkins:
     JCasC:
       enabled: true
       defaultConfig: true
+      configScripts:
+        openshiftCredentials:
+        credentials:
+          system:
+            domainCredentials:
+            - credentials:
+              - openShiftToken:
+                  id: "system:serviceaccounts:<project>:<serviceaccount>"
+                  scope: GLOBAL
+                  secret: "{<secret>}"
   rbac:
     create: false
 
