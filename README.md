@@ -2,6 +2,8 @@
 
 Based on [OpenShift Jenkins Container Image](https://github.com/openshift/jenkins)
 
+Uses the official (Jenkins helm chart)[https://github.com/helm/charts/tree/master/stable/jenkins]
+
 https://blog.openshift.com/stateful-workloads-and-the-two-data-center-conundrum/
 https://blog.openshift.com/deploying-openshift-applications-multiple-datacenters/
 https://searchservervirtualization.techtarget.com/feature/The-difference-between-disaster-avoidance-and-recovery
@@ -54,6 +56,12 @@ helm dep update
 # Deploy jenkins
 helm install jenkins-test -f runtime-config.yaml ./
 ```
+
+### Grant jenkins service account project edit permissions
+This might not be needed outside of rhpds cluster
+
+
+
 
 ## Misc
 

@@ -33,6 +33,73 @@ jenkins:
                   id: "system:serviceaccounts:<project>:<serviceaccount>"
                   scope: GLOBAL
                   secret: "{<secret>}"
+    jobs:
+      test: |-
+        <?xml version='1.1' encoding='UTF-8'?>
+        <flow-definition plugin="workflow-job@2.36">
+          <actions>
+            <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@1.4.0"/>
+            <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@1.4.0">
+              <jobProperties/>
+              <triggers/>
+              <parameters/>
+              <options/>
+            </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
+          </actions>
+          <description></description>
+          <keepDependencies>false</keepDependencies>
+          <properties/>
+          <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.77">
+            <script>def appA = &quot;modern-webapp&quot;
+        def appAScale = &quot;5&quot;
+        def projectA = &quot;nick-ibm-app-a&quot;
+        def clusterAName = &quot;cluster_a&quot;
+        def clusterAUri = &quot;https://api.shared-rhpds.rhpds.openshift.opentlc.com:6443&quot;
+        def appB = &quot;modern-webapp&quot;
+        def appBScale = &quot;5&quot;
+        def projectB = &quot;nick-ibm-app-b&quot;
+        def clusterBName = &quot;cluster_b&quot;
+        def clusterBUri = &quot;https://api.shared-rhpds.rhpds.openshift.opentlc.com:6443&quot;
+
+        // Checks whether a given Kubernetes cluster is healthy
+        def isClusterHealthy(def clusterUri) {
+            // Make GET request against Kubernetes healthz api endpoint
+            def clusterHealth = sh(returnStdout: true, script: &quot;&quot;&quot;curl -k ${clusterUri}/healthz&quot;&quot;&quot;)
+
+            // If &apos;ok&apos; then cluster is healthy
+            if (clusterHealth == &quot;ok&quot;) {
+                return true
+            }
+            else {
+                return false
+            }
+        }
+
+        // Scale application deploymentConfig to specific number of pods
+        def scaleApplication(def clusterName, def deploymentConfigName, def namespaceName, def deploymentConfigScale) {
+
+        }
+
+        pipeline {
+            agent any
+            stages {
+                stage(&apos;Check Cluster A&apos;) {
+                    steps {
+                        script {
+                            if (isClusterHealthy(clusterAUri)) {
+                                print &quot;Healthy!&quot;
+                            } else {
+
+                            }
+                        }
+                    }
+                }
+            }
+        }</script>
+            <sandbox>true</sandbox>
+          </definition>
+          <triggers/>
+          <disabled>false</disabled>
+        </flow-definition>
   rbac:
     create: false
-
